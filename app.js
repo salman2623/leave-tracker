@@ -14,6 +14,8 @@ function weekdays(y){let n=0;for(let m=0;m<12;m++)for(let d=1;d<=new Date(y,m+1,
 function elapsedWeekdays(y){let end=y===new Date().getFullYear()?new Date():new Date(y,11,31);let n=0;for(let d=new Date(y,0,1);d<=end;d.setDate(d.getDate()+1))if(d.getDay()>0&&d.getDay()<6)n++;return n}
 function fmt(s){return new Date(s+"T00:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}
 function monthName(m){return new Date(year,m,1).toLocaleDateString("en-IN",{month:"long"})}
+function toast(msg){const t=$("toast");if(!t)return;t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2000)}
+
 function render(){
  $("yearTitle").textContent=year; $("calendarHeading").textContent=year+" calendar";
  const leaves=data.leaves.filter(x=>x.date.startsWith(year+"-"));
@@ -25,6 +27,7 @@ function render(){
  
  $("workingDays").textContent=wd;$("workedDays").textContent=`${worked} worked · ${Math.max(0,wd-elapsed)} upcoming`;
  $("leaveDays").textContent=total;$("leaveBreakdown").textContent=`${off} offshore · ${on} onshore`;
+ $("workTarget").textContent=target;
  $("workProgress").textContent=`${worked} / ${target} worked`;
  
  $("statusText").textContent=`Full year: ${target} working days required`;
@@ -34,6 +37,7 @@ function render(){
  $("balanceBadge").className="balance-badge "+(diff>0?"bad":diff<0?"warn":"good");
  renderCalendar();renderList(leaves);
 }
+
 function renderCalendar(){
  let html='<div class="weekdays">'+["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(x=>`<span>${x}</span>`).join("")+'</div><div class="months">';
  for(let m=0;m<12;m++){
@@ -49,15 +53,18 @@ function renderCalendar(){
  html+='</div>'; $("calendar").innerHTML=html;
  document.querySelectorAll(".day:not(.blank):not(.weekend)").forEach(b=>b.onclick=()=>{const l=data.leaves.find(x=>x.date===b.dataset.date);l?openModal(l):openModal(null,b.dataset.date)});
 }
+
 function renderList(leaves){
  const arr=leaves.filter(x=>filter==="all"||x.type===filter).sort((a,b)=>b.date.localeCompare(a.date));
  $("logSubtitle").textContent=`${arr.length} ${arr.length===1?"day":"days"}`;
  $("leaveList").innerHTML=arr.map(l=>`<article class="leave-item" data-id="${l.id}"><div class="type-icon ${l.type}">${l.type==="offshore"?"O":"N"}</div><div><b>${l.type==="offshore"?"Offshore":"Onshore"}</b><small>${fmt(l.date)}${l.note?" · "+esc(l.note):""}</small></div><span>›</span></article>`).join("");
  $("emptyState").hidden=arr.length!==0;document.querySelectorAll(".leave-item").forEach(x=>x.onclick=()=>openModal(data.leaves.find(l=>l.id===x.dataset.id)));
 }
+
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function openModal(l=null,date=today){$("modalBackdrop").hidden=false;$("modalTitle").textContent=l?"Edit Leave":"Add Leave";$("leaveId").value=l?.id||"";$("date").value=l?.date||date;$("type").value=l?.type||"offshore";const note=l?.note||"";$("notePreset").value=["Personal Leave","Offshore Holiday","Onshore Holiday","Other"].includes(note)?note:"";$("note").value=note;$("deleteBtn").hidden=!l}
 function closeModal(){$("modalBackdrop").hidden=true}
+
 $("addBtn").onclick=()=>openModal();$("closeModal").onclick=closeModal;$("modalBackdrop").onclick=e=>{if(e.target===$("modalBackdrop"))closeModal()};
 $("notePreset").onchange=e=>{if(e.target.value){$("note").value=e.target.value;if(e.target.value==="Other"){$("note").focus();$("note").select()}}};
 $("note").oninput=e=>{const v=e.target.value.trim();$("notePreset").value=["Personal Leave","Offshore Holiday","Onshore Holiday","Other"].includes(v)?v:""};
@@ -69,6 +76,29 @@ $("settingsBtn").onclick=()=>{$("settingsModal").hidden=false;$("requiredDays").
 $("closeSettings").onclick=()=>{$("settingsModal").hidden=true};$("settingsModal").onclick=e=>{if(e.target===$("settingsModal"))$("settingsModal").hidden=true};
 $("requiredDays").onchange=e=>{data.settings.requiredDays=Number(e.target.value)||0;save();render()};
 $("exportBtn").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));a.download=`leave-backup-${today}.json`;a.click();toast("Backup exported")};
-$("importFile").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x.leaves))throw 0;data={...data,...x,settings:{...defaults,...x.settings}};save();year=new Date().getFullYear();render();$("settingsModal").hidden=true;toast("Backup restored")}catch{alert("Invalid backup file.")}e.target.value=""};r.readAsText(f)};
+
+$("importFile").onchange=e=>{
+  const f=e.target.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const x=JSON.parse(r.result);
+      if(!x||typeof x!=="object"||!Array.isArray(x.leaves))throw 0;
+      data={version:x.version||1,year:x.year||new Date().getFullYear(),leaves:x.leaves,settings:{...defaults,...(x.settings||{})}};
+      save();
+      year=new Date().getFullYear();
+      render();
+      $("settingsModal").hidden=true;
+      toast("Backup restored");
+    }catch{
+      alert("Invalid backup file.");
+    }finally{
+      e.target.value="";
+    }
+  };
+  r.readAsText(f);
+};
+
 $("clearBtn").onclick=()=>{if(confirm("Delete all leave records?")){data.leaves=[];save();render();$("settingsModal").hidden=true;toast("Leave records cleared")}};
 window.onkeydown=e=>{if(e.key==="Escape"){closeModal();$("settingsModal").hidden=true}};if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});render();
