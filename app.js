@@ -25,7 +25,7 @@ function render(){
  const diff=total-expectedLeave;
  $("workingDays").textContent=wd;$("workedDays").textContent=`${worked} worked · ${Math.max(0,wd-elapsed)} upcoming`;
  $("leaveDays").textContent=total;$("leaveBreakdown").textContent=`${off} offshore · ${on} onshore`;
- $("workTarget").textContent=target;$("workProgress").textContent=`${worked} / ${target} worked`;
+ 
  if(year!==new Date().getFullYear()){
    $("statusText").textContent=`Full year: ${target} working days required`;
  } else {
@@ -59,9 +59,11 @@ function renderList(leaves){
  $("emptyState").hidden=arr.length!==0;document.querySelectorAll(".leave-item").forEach(x=>x.onclick=()=>openModal(data.leaves.find(l=>l.id===x.dataset.id)));
 }
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-function openModal(l=null,date=today){$("modalBackdrop").hidden=false;$("modalTitle").textContent=l?"Edit Leave":"Add Leave";$("leaveId").value=l?.id||"";$("date").value=l?.date||date;$("type").value=l?.type||"offshore";$("note").value=l?.note||"";$("deleteBtn").hidden=!l}
+function openModal(l=null,date=today){$("modalBackdrop").hidden=false;$("modalTitle").textContent=l?"Edit Leave":"Add Leave";$("leaveId").value=l?.id||"";$("date").value=l?.date||date;$("type").value=l?.type||"offshore";const note=l?.note||"";$("notePreset").value=["Personal Leave","Offshore Holiday","Onshore Holiday","Other"].includes(note)?note:"";$("note").value=note;$("deleteBtn").hidden=!l}
 function closeModal(){$("modalBackdrop").hidden=true}
 $("addBtn").onclick=()=>openModal();$("closeModal").onclick=closeModal;$("modalBackdrop").onclick=e=>{if(e.target===$("modalBackdrop"))closeModal()};
+$("notePreset").onchange=e=>{if(e.target.value){$("note").value=e.target.value;if(e.target.value==="Other"){$("note").focus();$("note").select()}}};
+$("note").oninput=e=>{const v=e.target.value.trim();$("notePreset").value=["Personal Leave","Offshore Holiday","Onshore Holiday","Other"].includes(v)?v:""};
 $("leaveForm").onsubmit=e=>{e.preventDefault();const id=$("leaveId").value,d=$("date").value;if(isWeekend(d)){alert("Weekends are holidays and cannot be logged as leave.");return}const item={id:id||crypto.randomUUID(),date:d,type:$("type").value,note:$("note").value.trim(),createdAt:id?(data.leaves.find(x=>x.id===id)?.createdAt||Date.now()):Date.now()};if(id)data.leaves=data.leaves.map(x=>x.id===id?item:x);else data.leaves.push(item);save();closeModal();render();toast("Leave saved")};
 $("deleteBtn").onclick=()=>{const id=$("leaveId").value;if(confirm("Delete this leave entry?")){data.leaves=data.leaves.filter(x=>x.id!==id);save();closeModal();render();toast("Leave deleted")}};
 $("prevYear").onclick=()=>{year--;render()};$("nextYear").onclick=()=>{year++;render()};$("todayBtn").onclick=()=>{year=new Date().getFullYear();render()};

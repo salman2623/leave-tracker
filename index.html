@@ -37,7 +37,11 @@
 <form id="leaveForm"><input type="hidden" id="leaveId">
 <label>Date<input id="date" type="date" required></label>
 <label>Leave type<select id="type"><option value="offshore">Offshore</option><option value="onshore">Onshore</option></select></label>
-<label>Note <span class="optional">(optional)</span><input id="note" list="noteOptions" maxlength="100" placeholder="Choose or type a note" autocomplete="off"><datalist id="noteOptions"><option value="Personal Leave"><option value="Offshore Holiday"><option value="Onshore Holiday"><option value="Other"></datalist></label>
+<label>Note <span class="optional">(optional)</span>
+<div class="note-picker">
+<select id="notePreset" aria-label="Choose a note"><option value="">Select a note</option><option value="Personal Leave">Personal Leave</option><option value="Offshore Holiday">Offshore Holiday</option><option value="Onshore Holiday">Onshore Holiday</option><option value="Other">Other</option></select>
+<input id="note" maxlength="100" placeholder="Or edit / type your own note" autocomplete="off">
+</div></label>
 <button class="primary-btn" type="submit">Save Leave</button><button class="danger-text" type="button" id="deleteBtn" hidden>Delete Leave</button>
 </form></div></div>
 
