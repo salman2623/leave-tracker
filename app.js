@@ -20,17 +20,12 @@ function render(){
  const off=leaves.filter(x=>x.type==="offshore").length,on=leaves.filter(x=>x.type==="onshore").length,total=leaves.length;
  const wd=weekdays(year), elapsed=elapsedWeekdays(year), worked=Math.max(0,elapsed-total);
  const target=Number(data.settings.requiredDays)||220;
- const fullYearLeaveCapacity=Math.max(0,wd-target);
- const expectedLeave=year===new Date().getFullYear()?Math.round(fullYearLeaveCapacity*(elapsed/wd)):fullYearLeaveCapacity;
+ const expectedLeave=Math.max(0,wd-target);
  const diff=total-expectedLeave;
  $("workingDays").textContent=wd;$("workedDays").textContent=`${worked} worked · ${Math.max(0,wd-elapsed)} upcoming`;
  $("leaveDays").textContent=total;$("leaveBreakdown").textContent=`${off} offshore · ${on} onshore`;
  
- if(year!==new Date().getFullYear()){
-   $("statusText").textContent=`Full year: ${target} working days required`;
- } else {
-   $("statusText").textContent=`By today: ${expectedLeave} leave ${expectedLeave===1?"day":"days"} expected`;
- }
+ $("statusText").textContent=`Full year: ${target} working days required`;
  $("statusValue").textContent=diff>0?`${diff} excess`:diff<0?`${-diff} to apply`:"On track";
  $("statusLabel").textContent=diff>0?"Excess leave taken":diff<0?"Leave still to apply":"Leave on track";
  $("balanceBadge").textContent=diff>0?"Above pace":diff<0?"Below pace":"On track";
