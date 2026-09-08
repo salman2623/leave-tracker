@@ -22,8 +22,10 @@ function render(){
  const target=Number(data.settings.requiredDays)||220;
  const expectedLeave=Math.max(0,wd-target);
  const diff=total-expectedLeave;
+ 
  $("workingDays").textContent=wd;$("workedDays").textContent=`${worked} worked · ${Math.max(0,wd-elapsed)} upcoming`;
  $("leaveDays").textContent=total;$("leaveBreakdown").textContent=`${off} offshore · ${on} onshore`;
+ $("workProgress").textContent=`${worked} / ${target} worked`;
  
  $("statusText").textContent=`Full year: ${target} working days required`;
  $("statusValue").textContent=diff>0?`${diff} excess`:diff<0?`${-diff} to apply`:"On track";
