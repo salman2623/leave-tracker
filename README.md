@@ -1,16 +1,19 @@
 # Leave Tracker
-A simple iPhone-friendly leave calendar based on the supplied Expense Tracker app.
+
+A simple, smooth, iPhone-friendly leave tracker.
 
 ## Features
-- Current-year calendar with weekends automatically disabled as holidays
-- Two leave types: Offshore and Onshore
-- Tap any weekday to add/edit leave
-- Current-date status: shows whether leave is still to be applied or excess leave has been taken
-- Configurable annual leave allowance and required working days
-- Year navigation and Today button
-- Local browser storage; no server/database
+- Current-year calendar
+- Saturdays and Sundays are automatic holidays
+- Log Offshore or Onshore leave
+- Leave note with quick options: Personal Leave, Offshore Holiday, Onshore Holiday, Other
+- Note field remains editable, so custom text can also be entered
+- Default required working days: 220
+- No annual leave allowance
+- Shows leave usage pace based on the 220-working-day target
+- Local browser storage
 - JSON backup and restore
-- PWA / GitHub Pages / iPhone Home Screen support
+- PWA support for GitHub Pages / iPhone Home Screen
 
-## Calculation
-For the current year, the app estimates leave that should have been used by today by spreading the annual allowance across the year's weekdays. It compares that expected amount with leave actually logged.
+## Use
+Open `index.html` in a browser, or deploy the folder to GitHub Pages.
