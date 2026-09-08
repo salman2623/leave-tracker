@@ -21,7 +21,7 @@
 <div class="summary-card"><span>Working days</span><strong id="workingDays">0</strong><small id="workedDays">0 worked</small></div>
 <div class="summary-card"><span>Leaves taken</span><strong id="leaveDays">0</strong><small id="leaveBreakdown">0 offshore · 0 onshore</small></div>
 </section>
-<section class="balance-card"><div><span>Leave allowance</span><strong id="allowance">0</strong><small id="remaining">0 remaining</small></div><span class="balance-badge" id="balanceBadge">On track</span></section>
+<section class="balance-card"><div><span>Work target</span><strong id="workTarget">220</strong><small id="workProgress">0 / 220 worked</small></div><span class="balance-badge" id="balanceBadge">On track</span></section>
 
 <section class="section-head"><div><h2 id="calendarHeading">Calendar</h2><p>Tap a weekday to log or remove leave</p></div><button class="today-btn" id="todayBtn">Today</button></section>
 <div class="calendar" id="calendar"></div>
@@ -43,9 +43,8 @@
 
 <div class="modal-backdrop" id="settingsModal" hidden><div class="modal">
 <div class="modal-head"><h2>Settings</h2><button class="icon-btn" id="closeSettings">×</button></div>
-<label>Annual leave allowance (days)<input id="leaveAllowance" type="number" min="0" max="366" step="1"></label>
 <label>Required working days per year<input id="requiredDays" type="number" min="0" max="366" step="1"></label>
-<p class="privacy-note">Weekends are automatically treated as holidays. Change these values if your company policy is different.</p>
+<p class="privacy-note">Weekends are automatically treated as holidays. Set the number of working days you need to complete in the year.</p>
 <div class="settings-list">
 <button class="setting-item" id="exportBtn"><span>Export backup</span><small>Save leave data and settings</small><b>›</b></button>
 <label class="setting-item file-label"><span>Import backup</span><small>Restore a JSON backup</small><b>›</b><input id="importFile" type="file" accept=".json,application/json"></label>
