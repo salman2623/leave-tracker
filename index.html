@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f7fb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Leave Tracker">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css"><title>Leave Tracker</title>
+</head>
+<body>
+<div class="app-shell">
+<header class="topbar"><div><p class="eyebrow">WORKDAY PLANNER</p><h1>Leave Tracker</h1></div><button class="icon-btn" id="settingsBtn">⚙</button></header>
+<section class="year-row"><button class="month-btn" id="prevYear">‹</button><button class="year-title" id="yearTitle"></button><button class="month-btn" id="nextYear">›</button></section>
+
+<section class="hero-card"><div><span id="statusLabel">Leave status</span><strong id="statusValue">—</strong><small id="statusText">Loading…</small></div><div class="hero-icon">✓</div></section>
+
+<section class="summary-grid">
+<div class="summary-card"><span>Working days</span><strong id="workingDays">0</strong><small id="workedDays">0 worked</small></div>
+<div class="summary-card"><span>Leaves taken</span><strong id="leaveDays">0</strong><small id="leaveBreakdown">0 offshore · 0 onshore</small></div>
+</section>
+<section class="balance-card"><div><span>Leave allowance</span><strong id="allowance">0</strong><small id="remaining">0 remaining</small></div><span class="balance-badge" id="balanceBadge">On track</span></section>
+
+<section class="section-head"><div><h2 id="calendarHeading">Calendar</h2><p>Tap a weekday to log or remove leave</p></div><button class="today-btn" id="todayBtn">Today</button></section>
+<div class="calendar" id="calendar"></div>
+
+<section class="section-head"><div><h2>Leave log</h2><p id="logSubtitle">0 days</p></div><button class="filter-btn" id="filterBtn">All ▾</button></section>
+<div id="leaveList" class="leave-list"></div>
+<section class="empty-state" id="emptyState"><div class="empty-icon">✓</div><h3>No leave logged</h3><p>Tap a weekday on the calendar to add leave.</p></section>
+<button class="fab" id="addBtn">＋</button>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal">
+<div class="modal-head"><h2 id="modalTitle">Add Leave</h2><button class="icon-btn" id="closeModal">×</button></div>
+<form id="leaveForm"><input type="hidden" id="leaveId">
+<label>Date<input id="date" type="date" required></label>
+<label>Leave type<select id="type"><option value="offshore">Offshore</option><option value="onshore">Onshore</option></select></label>
+<label>Note <span class="optional">(optional)</span><input id="note" maxlength="100" placeholder="Optional note"></label>
+<button class="primary-btn" type="submit">Save Leave</button><button class="danger-text" type="button" id="deleteBtn" hidden>Delete Leave</button>
+</form></div></div>
+
+<div class="modal-backdrop" id="settingsModal" hidden><div class="modal">
+<div class="modal-head"><h2>Settings</h2><button class="icon-btn" id="closeSettings">×</button></div>
+<label>Annual leave allowance (days)<input id="leaveAllowance" type="number" min="0" max="366" step="1"></label>
+<label>Required working days per year<input id="requiredDays" type="number" min="0" max="366" step="1"></label>
+<p class="privacy-note">Weekends are automatically treated as holidays. Change these values if your company policy is different.</p>
+<div class="settings-list">
+<button class="setting-item" id="exportBtn"><span>Export backup</span><small>Save leave data and settings</small><b>›</b></button>
+<label class="setting-item file-label"><span>Import backup</span><small>Restore a JSON backup</small><b>›</b><input id="importFile" type="file" accept=".json,application/json"></label>
+<button class="setting-item" id="clearBtn"><span>Clear all leave</span><small>This cannot be undone</small><b>›</b></button>
+</div></div></div>
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body></html>
